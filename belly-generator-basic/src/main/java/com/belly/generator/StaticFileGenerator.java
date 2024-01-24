@@ -62,7 +62,7 @@ public class StaticFileGenerator {
     private static void copyFileByRecursive(File inputFile, File outputFile) throws IOException {
         //判断是文件还是目录
         if (inputFile.isDirectory()){
-            System.out.println("输入的文件名：" + inputFile.getName());
+//            System.out.println("输入的文件名：" + inputFile.getName());
             File targetFilePath = new File(outputFile, inputFile.getName());
             if (!targetFilePath.exists()){
                 targetFilePath.mkdirs();
@@ -70,6 +70,7 @@ public class StaticFileGenerator {
 
             //获取文件下的所有文件和子目录
             File[] listFiles = inputFile.listFiles();
+
             //无子文件，退出
             if (ArrayUtil.isEmpty(listFiles)){
                 return;

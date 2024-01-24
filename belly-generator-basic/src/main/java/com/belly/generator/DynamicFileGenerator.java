@@ -1,5 +1,6 @@
 package com.belly.generator;
 
+import cn.hutool.core.io.FileUtil;
 import com.belly.model.TemplateConfig;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -38,6 +39,11 @@ public class DynamicFileGenerator {
 //        templateConfig.setAuthor("belly");
 //        templateConfig.setLoop(false);
 //        templateConfig.setOutputText("求和结果：");
+
+        //判断文件是否存在
+        if (!FileUtil.exist(outputPath)){
+            FileUtil.touch(outputPath);
+        }
 
         //生成模板
         FileWriter writer = new FileWriter(outputPath);

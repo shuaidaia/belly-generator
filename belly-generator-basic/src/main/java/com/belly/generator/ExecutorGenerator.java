@@ -18,7 +18,7 @@ public class ExecutorGenerator {
         TemplateConfig templateConfig = new TemplateConfig();
         templateConfig.setAuthor("belly");
         templateConfig.setLoop(true);
-        templateConfig.setOutputText("求和=：");
+        templateConfig.setOutputText("求和等于：");
         generator(templateConfig);
     }
 
@@ -31,10 +31,9 @@ public class ExecutorGenerator {
         //得到项目根路径
         String outputPath = System.getProperty("user.dir");
 
+        //生成静态文件
         File parentFile = new File(outputPath).getParentFile();
         String inputPath = new File(parentFile, "belly-generator/template").getAbsolutePath();
-
-        //生成静态文件
         StaticFileGenerator.copyFilesByRecursive(inputPath, outputPath);
 
         //生成动态文件

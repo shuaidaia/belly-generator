@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>belly-generator-basic</module>
+        <module>belly-generator-factory</module>
     </modules>
 
     <properties>
