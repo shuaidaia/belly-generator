@@ -130,6 +130,7 @@ const Index: React.FC = () => {
       <div style={{ marginBottom: 24 }} />
 
       <List<API.GeneratorVO>
+
         rowKey="id"
         loading={loading}
         grid={{

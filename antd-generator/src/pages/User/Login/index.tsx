@@ -1,4 +1,5 @@
 import Footer from '@/components/Footer';
+// @ts-ignore
 import { userLoginUsingPost } from '@/services/backend/userController';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
