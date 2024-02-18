@@ -1,29 +1,27 @@
-import {Card, Flex, message, Upload, UploadFile, UploadProps} from 'antd';
+import {Card, Flex, message, UploadFile, UploadProps} from 'antd';
 import React, {useState} from 'react';
 import {InboxOutlined} from "@ant-design/icons";
 import {uploadFileUsingPost} from "@/services/backend/fileController";
+import Dragger from "antd/es/upload/Dragger";
 
 /**
  * 上传页面
  * @constructor
  */
 
-const {Dragger} = Upload;
-
 interface Props {
   biz: string;
-  value?: UploadFile[];
   description?: string;
   onChange?: (fileList: UploadFile[]) => void;
+  value?: UploadFile[];
 
 }
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-const UploadFile: React.FC<Props> = (props) => {
+const UploadFiles: React.FC<Props> = (props) => {
   const {biz, value, description, onChange} = props;
   const [loading, setLoading] = useState<boolean>(false);
   const uploadProps: UploadProps = {
     name: 'file',
-    multiple: true,
+    multiple: false,
     listType: "text",
     maxCount: 1,
     fileList: value,
@@ -48,7 +46,7 @@ const UploadFile: React.FC<Props> = (props) => {
 
   return (
     <Flex justify="center" gap={16}>
-      <Card title="文件上传">
+      <Card title="">
         <Dragger {...uploadProps}>
           <p className="ant-upload-drag-icon">
             <InboxOutlined/>
@@ -63,4 +61,4 @@ const UploadFile: React.FC<Props> = (props) => {
   );
 };
 
-export default UploadFile;
+export default UploadFiles;

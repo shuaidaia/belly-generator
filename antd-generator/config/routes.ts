@@ -12,6 +12,10 @@ export default [
     ]
   },
   {path: '/', icon: 'home', component: './Index', name: "主页"},
+  {path: '/generator/add', icon: 'edit', component: './Generator/Add', name: "创建生成器"},
+  {path: '/generator/update', icon: 'edit', component: './Generator/Add', name: "修改生成器", hideInMenu: true},
+  {path: '/generator/use/:id', icon: 'edit', component: './Generator/Use', name: "使用生成器", hideInMenu: true},
+  {path: '/generator/detail/:id', icon: 'home', component: './Generator/Detail', name: "生成器详情", hideInMenu: true},
   {path: '/test/file', icon: 'home', component: './Test/File', name: "文件测试", hideInMenu: true},
   {
     path: '/admin',

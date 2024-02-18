@@ -32,6 +32,21 @@ export async function deleteGeneratorUsingPost(
   });
 }
 
+/** downloadGeneratorById GET /api/generator/download */
+export async function downloadGeneratorByIdUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.downloadGeneratorByIdUsingGETParams,
+  options?: { [key: string]: any },
+) {
+  return request<any>('/api/generator/download', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** editGenerator POST /api/generator/edit */
 export async function editGeneratorUsingPost(
   body: API.GeneratorEditRequest,
@@ -113,6 +128,21 @@ export async function updateGeneratorUsingPost(
   options?: { [key: string]: any },
 ) {
   return request<API.BaseResponseBoolean_>('/api/generator/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** useGenerator POST /api/generator/use */
+export async function useGeneratorUsingPost(
+  body: API.GeneratorUseRequest,
+  options?: { [key: string]: any },
+) {
+  return request<any>('/api/generator/use', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
