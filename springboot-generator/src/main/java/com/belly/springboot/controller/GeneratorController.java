@@ -1,12 +1,15 @@
 package com.belly.springboot.controller;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.belly.generator.executor.ZipGenerator;
+import com.belly.model.MetaValidator;
 import com.belly.springboot.annotation.AuthCheck;
 import com.belly.springboot.common.BaseResponse;
 import com.belly.springboot.common.DeleteRequest;
@@ -16,7 +19,7 @@ import com.belly.springboot.constant.UserConstant;
 import com.belly.springboot.exception.BusinessException;
 import com.belly.springboot.exception.ThrowUtils;
 import com.belly.springboot.manager.CosManager;
-import com.belly.springboot.meta.Meta;
+import com.belly.model.Meta;
 import com.belly.springboot.model.dto.generator.*;
 import com.belly.springboot.model.entity.Generator;
 import com.belly.springboot.model.entity.User;
@@ -26,6 +29,7 @@ import com.belly.springboot.service.UserService;
 import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
+import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -413,6 +417,68 @@ public class GeneratorController {
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-Disposition", "attachment; filename=" + resFile.getName());
         Files.copy(resFile.toPath(), response.getOutputStream());
+
+        //删除临时文件,使用异步处理
+        CompletableFuture.runAsync(() -> {
+            FileUtil.del(tempDirPath);
+        });
+    }
+
+    /**
+     * 制作生成器
+     *
+     * @param generatorMakeRequest
+     * @param request
+     * @param response
+     */
+    @PostMapping("/make")
+    public void makeGenerator(@RequestBody GeneratorMakeRequest generatorMakeRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Meta meta = generatorMakeRequest.getMeta();
+        String zipFilePath = generatorMakeRequest.getZipFilePath();
+
+        //登录信息
+        User loginUser = userService.getLoginUser(request);
+        log.info("{}-用户：{}制作生成器id={}", DateUtil.now(), loginUser, loginUser.getId());
+
+        //下载压缩包到本地
+        String property = System.getProperty("user.dir");
+        String id = IdUtil.getSnowflakeNextId() + RandomUtil.randomString(6);
+        String tempDirPath = String.format("%s/.temp/make/%s", property, id);
+        String zipPath = tempDirPath + "belly_generator_template.zip";
+
+        if (!FileUtil.exist(zipPath)){
+            FileUtil.touch(zipPath);
+        }
+
+        //下载
+        try {
+            cosManager.download(zipFilePath, zipPath);
+        } catch (InterruptedException e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "下载失败");
+        }
+
+        //解压
+        File unzipDirPath = ZipUtil.unzip(zipPath);
+
+        //调用制作生成器方法
+        String unzipDirPathAbsolutePath = unzipDirPath.getAbsolutePath();
+        meta.getFileConfig().setSourceRootPath(unzipDirPathAbsolutePath);
+        MetaValidator.validAndFill(meta);//校验元数据
+        String outputPath = tempDirPath + "/generator/" + meta.getName();
+        try {
+            new ZipGenerator().generator(meta, outputPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成失败");
+        }
+
+        //下载制作的生成器压缩包
+        String zipFileName = meta.getName() + "-dist.zip";
+        String distZipFilePath = outputPath + "-dist.zip";
+        response.setContentType("application/octet-stream");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + zipFileName);
+        Files.copy(Paths.get(distZipFilePath), response.getOutputStream());
 
         //删除临时文件,使用异步处理
         CompletableFuture.runAsync(() -> {

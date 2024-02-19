@@ -4,26 +4,25 @@ import com.belly.model.Meta;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 /**
- * 代码生成器请求
+ * 制作代码生成器请求
  *
  * @author belly
  * @version 1.1.0
  */
 @Data
-public class GeneratorUseRequest implements Serializable {
+public class GeneratorMakeRequest implements Serializable {
 
     /**
-     * 生成器id
+     * 元数据文件
      */
-    private Long id;
+    private Meta meta;
 
     /**
-     * 数据模型
+     * 模板文件压缩包路径
      */
-    private Map<String, Object> dataModel;
+    private String zipFilePath;
     private static final long serialVersionUID = 1L;
 }

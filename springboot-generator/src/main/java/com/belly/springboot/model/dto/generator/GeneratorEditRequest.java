@@ -1,6 +1,6 @@
 package com.belly.springboot.model.dto.generator;
 
-import com.belly.springboot.meta.Meta;
+import com.belly.model.Meta;
 import lombok.Data;
 
 import java.io.Serializable;

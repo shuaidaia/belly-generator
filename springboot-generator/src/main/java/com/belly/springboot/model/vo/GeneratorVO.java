@@ -1,7 +1,7 @@
 package com.belly.springboot.model.vo;
 
 import cn.hutool.json.JSONUtil;
-import com.belly.springboot.meta.Meta;
+import com.belly.model.Meta;
 import com.belly.springboot.model.entity.Generator;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
