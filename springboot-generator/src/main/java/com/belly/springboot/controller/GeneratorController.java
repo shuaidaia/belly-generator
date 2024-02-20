@@ -349,8 +349,8 @@ public class GeneratorController {
         }
 
         //定义临时工作目录，从对象存储中下载生成器压缩包
-        String property = System.getProperty("user.dir");
-        String tempDirPath = String.format("%s/.temp/use/%s", property, id);
+        String property = System.getProperty("user.dir").replace("\\", "/");
+        String tempDirPath = String.format("%s/.temp/use/%s/", property, id);
         String zipFilePath = tempDirPath + "belly_generator.zip";
         if (!FileUtil.exist(zipFilePath)){
             FileUtil.touch(zipFilePath);
@@ -386,7 +386,7 @@ public class GeneratorController {
 
         //执行脚本文件
         String scriptAbsolutePath = scriptPath.getAbsolutePath().replace("\\", "/");
-        String[] commands = {scriptAbsolutePath, "json-generate", "--file=", dataModelFilePath};
+        String[] commands = {scriptAbsolutePath, "json-generate", "-f", dataModelFilePath};
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
         processBuilder.directory(scriptPath.getParentFile());
         try {
@@ -400,7 +400,6 @@ public class GeneratorController {
                 System.out.println(line);
             }
 
-
             //命令执行结束
             int exit = process.waitFor();
             System.out.println("命令执行结束，退出码：" + exit);
@@ -410,7 +409,7 @@ public class GeneratorController {
         }
 
         //压缩得到的生成结果，返回给前端
-        String generatedPath = scriptPath.getAbsolutePath() + "/generated";
+        String generatedPath = scriptPath.getParentFile().getAbsolutePath().replace("\\", "/") + "/generated";
         String resultPath = tempDirPath + "/result.zip";
         File resFile = ZipUtil.zip(generatedPath, resultPath);
         response.setContentType("application/octet-stream");
